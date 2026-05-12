@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="themeColorMeta" content="#111110">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="FAST">
+  <title>FAST</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <span class="brand">FAST</span>
+      <div class="header-right">
+        <span class="streak-badge" id="streakBadge">— —</span>
+      </div>
+    </header>
+
+    <!-- ── Progress Ring ── -->
+    <section class="ring-section">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 300 300" aria-hidden="true">
+          <!-- Tick marks around ring -->
+          <g id="ringTicks" class="ring-ticks"></g>
+          <!-- Background track -->
+          <circle class="ring-track" cx="150" cy="150" r="118"/>
+          <!-- Progress fill -->
+          <circle class="ring-fill" id="ringFill" cx="150" cy="150" r="118"/>
+          <!-- Traveling dot -->
+          <circle class="ring-dot" id="ringDot" cx="150" cy="32" r="7"/>
+        </svg>
+        <div class="ring-inner">
+          <div class="ring-time" id="ringTime">—:——:——</div>
+          <div class="ring-status" id="ringStatus">READY</div>
+          <div class="ring-sub" id="ringSub">SET YOUR WINDOW</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Rotary Dial ── -->
+    <section class="dial-section">
+      <div class="dial-header">
+        <span class="dial-meta">FAST</span>
+        <div class="dial-display" id="dialDisplay">
+          <span class="dial-hours" id="dialFastHours">16</span>
+          <span class="dial-colon">:</span>
+          <span class="dial-eat" id="dialEatHours">8</span>
+        </div>
+        <span class="dial-meta">EAT</span>
+      </div>
+
+      <div class="dial-wrap">
+        <svg id="dialSvg" class="dial-svg" viewBox="0 0 220 148" touch-action="none">
+          <!-- Full track arc -->
+          <path id="dialTrack" class="d-track"/>
+          <!-- Active filled arc -->
+          <path id="dialActive" class="d-active"/>
+          <!-- Hour tick marks -->
+          <g id="dialTicks"></g>
+          <!-- Draggable knob -->
+          <g id="dialKnob">
+            <circle class="knob-shadow" r="16"/>
+            <circle class="knob-body" r="14"/>
+            <circle class="knob-dot" r="4"/>
+            <line class="knob-pointer" x1="0" y1="-6" x2="0" y2="-13"/>
+          </g>
+          <!-- Large invisible drag surface -->
+          <circle id="dragSurface" cx="110" cy="95" r="95" fill="transparent"/>
+        </svg>
+        <div class="dial-ends">
+          <span>12H</span>
+          <span>23H</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Big Action Button ── -->
+    <section class="cta-section">
+      <button class="cta-btn" id="ctaBtn" aria-label="Start or stop fast">
+        <span class="cta-label" id="ctaLabel">START FAST</span>
+        <span class="cta-sub" id="ctaSub"></span>
+      </button>
+    </section>
+
+  </div><!-- /.app -->
+
+  <script src="app.js"></script>
+</body>
+</html>
