@@ -22,7 +22,8 @@ let S = {
   fastStart: null,   // Date.now() ms, null if not fasting
   isFasting: false,
   streak:    0,
-  lastDate:  null    // ISO date string of last completed fast
+  lastDate:  null,   // ISO date string of last completed fast
+  history:   []      // Array of {start, end, goal}
 };
 
 let ticker = null;
@@ -47,6 +48,17 @@ const $ctaBtn     = document.getElementById('ctaBtn');
 const $ctaLabel   = document.getElementById('ctaLabel');
 const $ctaSub     = document.getElementById('ctaSub');
 const $streak     = document.getElementById('streakBadge');
+
+const $historyBtn   = document.getElementById('historyBtn');
+const $historyModal = document.getElementById('historyModal');
+const $closeHistory = document.getElementById('closeHistoryModal');
+const $activeFastSection = document.getElementById('activeFastSection');
+const $editStartTime = document.getElementById('editStartTime');
+const $saveStartTimeBtn = document.getElementById('saveStartTimeBtn');
+const $addPastStart = document.getElementById('addPastStart');
+const $addPastEnd   = document.getElementById('addPastEnd');
+const $addPastBtn   = document.getElementById('addPastBtn');
+const $historyList  = document.getElementById('historyList');
 
 // ── Geometry helpers ──────────────────────────────────
 
@@ -272,6 +284,13 @@ function endFast() {
     const elapsed = Date.now() - S.fastStart;
     const goal    = S.hours * 3600 * 1000;
     if (elapsed >= goal * 0.75) checkStreak();  // ≥75% complete counts
+    
+    S.history = S.history || [];
+    S.history.push({
+      start: S.fastStart,
+      end: Date.now(),
+      goal: S.hours
+    });
   }
   S.isFasting = false;
   S.fastStart = null;
@@ -312,9 +331,107 @@ function save() {
 function load() {
   try {
     const raw = localStorage.getItem('fast_v2');
-    if (raw) S = { ...S, ...JSON.parse(raw) };
+    if (raw) {
+      S = { ...S, ...JSON.parse(raw) };
+      S.history = S.history || [];
+    }
   } catch (_) {}
 }
+
+// ── History & Edit ────────────────────────────────────
+
+function formatForInput(ms) {
+  const d = new Date(ms);
+  const tzOffset = d.getTimezoneOffset() * 60000;
+  return new Date(d - tzOffset).toISOString().slice(0, 16);
+}
+
+function renderHistory() {
+  $historyList.innerHTML = '';
+  if (!S.history || S.history.length === 0) {
+    $historyList.innerHTML = '<div style="color:var(--muted);font-family:var(--font-mono);font-size:0.65rem;">NO PAST FASTS</div>';
+    return;
+  }
+  
+  [...S.history].reverse().forEach((item, revIdx) => {
+    const idx = S.history.length - 1 - revIdx;
+    const elapsed = item.end - item.start;
+    const isSuccess = elapsed >= item.goal * 3600000 * 0.75;
+    const color = isSuccess ? 'var(--yellow)' : 'var(--muted)';
+    
+    const startStr = new Date(item.start).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+    const endStr = new Date(item.end).toLocaleString([], {hour:'numeric', minute:'2-digit'});
+
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.style.borderLeftColor = color;
+    div.innerHTML = `
+      <div class="hi-info">
+        <span class="hi-dates">${startStr} — ${endStr}</span>
+        <span class="hi-duration">${fmtMs(elapsed)}</span>
+        <span class="hi-goal">${item.goal}H GOAL</span>
+      </div>
+      <button class="hi-delete" data-idx="${idx}">✕</button>
+    `;
+    $historyList.appendChild(div);
+  });
+}
+
+$historyList.addEventListener('click', e => {
+  if (e.target.classList.contains('hi-delete')) {
+    const idx = parseInt(e.target.getAttribute('data-idx'));
+    S.history.splice(idx, 1);
+    save();
+    renderHistory();
+  }
+});
+
+function openHistoryModal() {
+  if (S.isFasting) {
+    $activeFastSection.style.display = 'flex';
+    $editStartTime.value = formatForInput(S.fastStart);
+  } else {
+    $activeFastSection.style.display = 'none';
+  }
+  
+  const now = Date.now();
+  $addPastEnd.value = formatForInput(now);
+  $addPastStart.value = formatForInput(now - S.hours * 3600000);
+
+  renderHistory();
+  $historyModal.classList.add('show');
+}
+
+$historyBtn.addEventListener('click', openHistoryModal);
+$closeHistory.addEventListener('click', () => $historyModal.classList.remove('show'));
+
+$saveStartTimeBtn.addEventListener('click', () => {
+  if (!S.isFasting) return;
+  const newStart = new Date($editStartTime.value).getTime();
+  if (!isNaN(newStart)) {
+    S.fastStart = newStart;
+    save();
+    refresh();
+  }
+  $historyModal.classList.remove('show');
+});
+
+$addPastBtn.addEventListener('click', () => {
+  const st = new Date($addPastStart.value).getTime();
+  const et = new Date($addPastEnd.value).getTime();
+  if (!isNaN(st) && !isNaN(et) && et > st) {
+    S.history = S.history || [];
+    S.history.push({
+      start: st,
+      end: et,
+      goal: S.hours
+    });
+    save();
+    renderHistory();
+  } else {
+    alert("Invalid dates. End must be after Start.");
+  }
+});
 
 // ── Dial interaction ──────────────────────────────────
 

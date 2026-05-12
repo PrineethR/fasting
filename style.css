@@ -41,7 +41,8 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  max-width: 440px;
+  max-width: 800px;
+  width: 100%;
   margin: 0 auto;
   background: var(--bg);
   position: relative;
@@ -123,7 +124,7 @@ html, body {
 
 .ring-wrap {
   position: relative;
-  width: min(58vw, 230px);
+  width: clamp(260px, 75vw, 420px);
   aspect-ratio: 1;
 }
 
@@ -183,7 +184,7 @@ html, body {
 
 .ring-time {
   font-family: var(--font-mono);
-  font-size: clamp(1.3rem, 6.5vw, 1.9rem);
+  font-size: clamp(2rem, 8vw, 3.5rem);
   font-weight: 700;
   color: var(--ink);
   letter-spacing: 0.03em;
@@ -194,7 +195,7 @@ html, body {
 
 .ring-status {
   font-family: var(--font-display);
-  font-size: clamp(0.85rem, 3.8vw, 1.15rem);
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
   color: var(--accent);
   letter-spacing: 0.22em;
   line-height: 1;
@@ -203,7 +204,7 @@ html, body {
 
 .ring-sub {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
   color: var(--muted);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -261,7 +262,11 @@ html, body {
 }
 
 /* Dial SVG */
-.dial-wrap { position: relative; }
+.dial-wrap { 
+  position: relative; 
+  width: clamp(280px, 85vw, 480px);
+  margin: 0 auto;
+}
 
 .dial-svg {
   width: 100%;
@@ -353,7 +358,7 @@ html, body {
   color: var(--bg);
   border: none;
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 7vw, 2rem);
+  font-size: clamp(2rem, 7vw, 3rem);
   letter-spacing: 0.3em;
   cursor: pointer;
   display: flex;
@@ -390,7 +395,7 @@ html, body {
 .cta-sub {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
   font-weight: 400;
   letter-spacing: 0.12em;
   opacity: 0.6;
@@ -478,3 +483,197 @@ html, body {
   margin-top: -4px;
   padding-bottom: 4px;
 }
+
+/* ── Modal & History ──────────────────────────────── */
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.icon-btn:hover {
+  color: var(--accent);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 16, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--bg);
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--ink);
+  color: var(--bg);
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.15em;
+  margin: 0;
+  line-height: 1;
+}
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+}
+.modal-close:hover { color: var(--bg); }
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+  margin: 0;
+  border-bottom: 1px solid rgba(17,17,16,0.1);
+  padding-bottom: 6px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.input-group label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.dt-input {
+  background: var(--paper);
+  border: 1px solid rgba(17,17,16,0.15);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 8px;
+  color: var(--ink);
+  outline: none;
+  border-radius: 0;
+  width: 100%;
+}
+.dt-input:focus {
+  border-color: var(--accent);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.btn-outline:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: var(--paper);
+  padding: 12px;
+  border-left: 3px solid var(--accent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hi-dates {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink);
+}
+.hi-duration {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+.hi-goal {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+}
+.hi-delete {
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+  opacity: 0.6;
+}
+.hi-delete:hover { opacity: 1; }
